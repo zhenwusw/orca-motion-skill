@@ -35,7 +35,7 @@ node scripts/capture.mjs examples/clearing/index.html -o clearing.mp4
 `examples/sieve/`：一个订阅管理产品的概念动效（默认深色主题）——九月账单一行行落下 → 6 笔订阅标成橙色、收拢成一根柱子 →
 推进柱子，没在用的留下，$59.97 / 月 → 缩回一年，折线画出 $719.64。
 
-`examples/kinetic-title/`：文字做主角的标题开场（拆解自 WWDC 开场）——标志定版后剪到左上角，两行标题逐字走可变字体的字重字宽波浪，署名打字机。拆解和原则见 `references/kinetic-type.md`。
+`examples/kinetic-title/`：文字做主角的标题开场（拆解自 WWDC 开场）——标志定版后剪到左上角，两行标题逐字走可变字体的字重字宽波浪，署名打字机。拆解和原则见 `references/kinetic-type.md`。字体（Roboto Flex、JetBrains Mono）从 Google Fonts 加载，打开和录制时需要联网。
 
 `examples/scene-preview/`：单独预览一个场景（折线画出、数字跟着滚）。不需要 orca-transition-skill，浏览器直接打开就播，同一个 `capture.mjs` 能录。
 
