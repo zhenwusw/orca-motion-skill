@@ -11,16 +11,14 @@ Agent 的使用说明见 [`SKILL.md`](SKILL.md)。
 
 ## 安装
 
-两个 skill 都要装，并且装在同一个 skills 目录下（示例按相对路径引用 orca-transition-skill）。装完在各自目录里 `npm install`：
+两个 skill 都要装，并且装在同一个 skills 目录下（示例按相对路径引用 orca-transition-skill）：
 
 ```bash
 npx skills add zhenwusw/orca-transition-skill -g -a claude-code
 npx skills add zhenwusw/orca-motion-skill -g -a claude-code
-(cd ~/.claude/skills/orca-transition-skill && npm install)
-(cd ~/.claude/skills/orca-motion-skill && npm install)
 ```
 
-其他 agent 把 `-a` 换成对应的名字，`npm install` 的目录换成它的 skills 目录。
+其他 agent 把 `-a` 换成对应的名字。依赖（GSAP、playwright-core）由 agent 首次使用时在 skill 目录里 `npm install`。
 
 录视频需要系统里装好的 Google Chrome 和 `ffmpeg`。
 

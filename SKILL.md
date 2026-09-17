@@ -20,6 +20,8 @@ description: 把产品、数据抽象成几种简单图形（格子、横条、�
 
 ## 流程（按顺序，不许跳）
 
+0. **装依赖**：本 skill 根目录下没有 `node_modules/` 时，先在根目录跑 `npm install`。
+   要连成片子时，检查同一个 skills 目录下有没有 orca-transition-skill：没有就停下，让用户先 `npx skills add zhenwusw/orca-transition-skill`；有但没有 `node_modules/`，也在它根目录跑 `npm install`。
 1. **读原则**：`references/principles.md`。主角是文字本身（标题开场、金句）时，再读 `references/kinetic-type.md`。
 2. **找主角和抽象**：写出这段片子的**一个**主角（一段被空出来的时间、一笔省下的钱），
    它用什么颜色（主题的 `--accent`，整片只给它用），产品里的东西抽象成哪几种图形（最多 4 种）。
