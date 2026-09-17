@@ -47,6 +47,7 @@
 | `m.mark(el 或 [el], at, {cls, on, pulse})` | 任意元素加上 / 去掉一个类（默认 `mo-hot`），轻轻弹一下。`on: false` 去掉（不再是主角） |
 | `m.dim(el, at, {to})` | 调暗成背景信息（默认 0.3），不是隐藏 |
 | `m.move(el, {x, y, w, h}, {at, duration})` | 移动 / 变形到新位置和尺寸，缺的项不变。同一个元素可以连续 move（列表行收拢成柱子） |
+| `m.turn(el, deg, {at, duration, origin})` | 旋转到 `deg` 度（顺时针为正），同一个元素可以连续 turn。`origin` 是旋转中心，默认 `"50% 50%"`；扇形展开绕底边中点转用 `"50% 100%"` |
 | `m.draw(line, {at, duration, follow})` | 折线从起点画到终点。`follow`：跟着笔尖走的元素（圆点），初始位置放在起点 |
 | `m.spell(grid, "TEXT", {at, row, col, each})` | 在网格里点亮格子拼出 5×7 点阵字（A–Z、0–9），每个字占 5 列，字间空 1 列 |
 | `m.scan(el, {at, from, to, duration})` | 扫描线从 y=from 走到 y=to |

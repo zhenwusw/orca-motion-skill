@@ -343,6 +343,15 @@
       return at + duration;
     };
 
+    // 旋转到 deg 度（顺时针为正），同一个元素可以连续 turn。origin 是旋转中心（CSS transform-origin），
+    // 比如扇形展开绕底边中点转："50% 100%"
+    m.turn = (el, deg, { at, duration = 0.5, ease = "power3.inOut", origin = "50% 50%" }) => {
+      const from = el._moTurn ?? 0;
+      tl.fromTo(el, { rotation: from, transformOrigin: origin }, { rotation: deg, transformOrigin: origin, duration, ease, immediateRender: false }, at);
+      el._moTurn = deg;
+      return at + duration;
+    };
+
     // 日程时间轴：hours = [开始, 结束]，events = [{ title, start: "13:30", end: "15:00" }]
     // 返回 { yOf(time), blocks, labels }
     m.agenda = ({ x, y, w, hourH, hours: [h0, h1], events, parent = root }) => {
