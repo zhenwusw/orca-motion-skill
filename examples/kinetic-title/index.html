@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Kinetic title · orca-motion-skill 示例</title>
+  <!-- 单场景示例：可变字体标题开场。拆解和原则见 references/kinetic-type.md。
+       浏览器直接打开就播；录制：node scripts/capture.mjs examples/kinetic-title/index.html -->
+  <link rel="stylesheet" href="../../runtime/tokens.css">
+  <!-- 字体要有 wght 和 wdth 两根轴：Roboto Flex（wght 100–1000，wdth 25–151） -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=JetBrains+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="../../runtime/motion.css">
+  <style>
+    /* 临时主题（橙底黑字）。主题归 orca-transition-skill 管，定稿后应挪到它的 runtime/themes/ */
+    :root { --bg: #fe7000; --text: #000; --text-dim: #3a1a00; --accent: #000;
+            --font: "Roboto Flex", sans-serif; --font-mono: "JetBrains Mono", ui-monospace, monospace; }
+    /* 预览舞台：1920×1080 画布按窗口等比缩放。这是模板自带的舞台样式，不要改 */
+    html, body { margin: 0; height: 100%; background: var(--bg); overflow: hidden; }
+    .mo-stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform: translate(-50%, -50%) scale(var(--mo-fit, 1)); }
+  </style>
+</head>
+<body>
+<div class="mo-stage">
+  <div class="mo-scene" data-scene="kinetic-title">
+    <script type="application/json">{
+      "brand": "ORCA26",
+      "logo": { "big": 2.6, "small": 1.3 },
+      "lines": ["Design motion from", "simple shapes"],
+      "byline": "Orca Studio, Motion & Interface Design"
+    }</script>
+  </div>
+</div>
+
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="../../runtime/motion.js"></script>
+<script src="scene.js"></script>
+<script> OrcaMotion.stage({ hold: 0 }); </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>kept · orca-motion-skill 单场景预览示例</title>
+  <!-- 单独预览一个场景（templates/scene-starter.html 填好的样子）：不需要 orca-transition-skill，
+       浏览器直接打开就播；录制：node scripts/capture.mjs examples/scene-preview/index.html
+       这个场景是从空画面开始的，所以有「建立」段；放进片子里被转场推进来时，建立段要去掉（见 principles.md 第 4 节） -->
+  <link rel="stylesheet" href="../../runtime/tokens.css">
+  <link rel="stylesheet" href="../../runtime/motion.css">
+  <style>
+    /* 预览舞台：1920×1080 画布按窗口等比缩放。这是模板自带的舞台样式，不要改 */
+    html, body { margin: 0; height: 100%; background: var(--bg); overflow: hidden; }
+    .mo-stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform: translate(-50%, -50%) scale(var(--mo-fit, 1)); }
+  </style>
+</head>
+<body>
+<div class="mo-stage">
+  <div class="mo-scene" data-scene="kept">
+    <script type="application/json">{
+      "label": "kept in a year",
+      "monthly": [41.2, 55.0, 59.97, 59.97, 72.4, 59.97, 48.1, 59.97, 66.3, 59.97, 59.97, 36.8],
+      "months": ["Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
+      "tagline": "Sieve · stop paying for what you forgot."
+    }</script>
+  </div>
+</div>
+
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="../../runtime/motion.js"></script>
+<script>
+  const usd = (n) => `$${Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  OrcaMotion.scene("kept", ({ el, tl, m, data }) => {
+    m.backdrop({ at: [30, 30] });
+    const CX = 240, CY = 360, CW = 1440, CH = 480;
+    // 累计值：第 0 个月是 0
+    const values = data.months.map((_, i) => data.monthly.slice(0, i).reduce((a, b) => a + b, 0));
+    const kept = values[values.length - 1];
+
+    const label = m.add("mo-t-xs", { x: 164, y: 130 }, data.label);
+    const big = m.add("mo-t-xl", { x: 160, y: 160 }, usd(0));
+    const axis = m.add("mo-axis", { x: CX, y: CY + CH, w: CW });
+    const months = data.months.map((mo, i) => {
+      const n = m.add("mo-t-xs", { x: CX + (i * CW) / (data.months.length - 1) - 40, y: CY + CH + 24, w: 80 }, mo);
+      n.style.textAlign = "center";
+      return n;
+    });
+    const line = m.line({ x: CX, y: CY, w: CW, h: CH, values });
+    const p0 = line.at(0);
+    const dot = m.add("mo-dot", { x: p0.x - 12, y: p0.y - 12, w: 24, h: 24 });
+
+    // 建立：数字、坐标轴、月份，起点弹出
+    m.rise(label, 0);
+    m.rise(big, 0.1);
+    m.reveal(axis, 0.2, 0.6);
+    let t = m.appear(months, { at: 0.3, origin: "left", span: 0.5, kind: "fade", duration: 0.3 });
+    m.pop(dot, t, 0.4);
+    t += 0.4;
+
+    // 发生：折线画出去，数字跟着笔尖滚
+    const D = 1.8;
+    m.draw(line, { at: t, duration: D, follow: dot });
+    m.count(big, { at: t, to: kept, decimals: 2, duration: D, ease: "power1.inOut", format: (s) => `$${s}` });
+    t += D;
+
+    // 停：标语
+    const tag = m.add("mo-t-s", { x: 164, y: 300 }, data.tagline);
+    m.reveal(tag, t + 0.2, 0.6);
+  });
+  OrcaMotion.stage();
+</script>
+</body>
+</html>

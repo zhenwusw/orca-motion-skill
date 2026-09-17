@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>{{场景名}}</title>
+  <!-- {{ROOT}} = 从这份 HTML 到 orca-motion-skill 根目录的相对路径。
+       单独预览一个场景用这个模板；要和其他场景连成片子，放进 orca-transition-skill 的演示稿（见 references/integration.md）。 -->
+  <link rel="stylesheet" href="{{ROOT}}/runtime/tokens.css">
+  <!-- 主题（可选）：<link rel="stylesheet" href="{{ROOT}}/runtime/themes/clearing.css"> -->
+  <link rel="stylesheet" href="{{ROOT}}/runtime/motion.css">
+  <style>
+    /* 预览舞台：1920×1080 画布按窗口等比缩放。这是模板自带的舞台样式，不要改 */
+    html, body { margin: 0; height: 100%; background: var(--bg); overflow: hidden; }
+    .mo-stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform: translate(-50%, -50%) scale(var(--mo-fit, 1)); }
+  </style>
+</head>
+<body>
+<div class="mo-stage">
+  <div class="mo-scene" data-scene="{{场景名}}">
+    <script type="application/json">{ }</script>
+  </div>
+</div>
+
+<script src="{{ROOT}}/node_modules/gsap/dist/gsap.min.js"></script>
+<script src="{{ROOT}}/runtime/motion.js"></script>
+<script>
+  OrcaMotion.scene("{{场景名}}", ({ el, tl, m, data }) => {
+    // 生成图形：m.add / m.grid / m.agenda …
+    // 排动作：m.appear / m.pop / m.count / m.spell / m.camera …
+  });
+  OrcaMotion.stage();
+</script>
+</body>
+</html>

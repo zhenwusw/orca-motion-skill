@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Sieve · orca-motion-skill 示例</title>
+  <!-- 默认主题（tokens.css：深色底 + 橙色强调），不加主题文件 -->
+  <link rel="stylesheet" href="../../../orca-transition-skill/node_modules/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="../../../orca-transition-skill/node_modules/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../../../orca-transition-skill/runtime/tokens.css">
+  <link rel="stylesheet" href="../../runtime/motion.css">
+</head>
+<body>
+<div class="reveal">
+
+<!-- 故事（主角：每个月悄悄扣走、却没在用的订阅费，橙色）
+抽象：一笔扣款 → 列表行；一组订阅 → 一根分段的柱子；一年 → 折线
+场景 1  month  九月的账单一行行出现；其中 6 笔订阅被标成橙色，收拢成一根柱子：$86.95 / 月
+场景 2  subs   柱子里的 6 个订阅（第 0 秒就在）：「最后打开」一列揭开，还在用的 2 个退回灰色，剩下 $59.97 / 月可以省
+场景 3  year   一年的折线从起点画出去，数字滚到 $719.64，标语
+
+转场计划
+1→2  关系：这根柱子里面就是这 6 个订阅            手法：放大进元素内部（in）   元素：subs
+2→3  关系：这一个月是一年折线的起点                手法：放大进元素内部（out）  元素：start
+-->
+
+<div class="slides">
+
+  <section data-hold="1">
+    <div class="mo-scene" data-scene="month">
+      <script type="application/json">{
+        "month": "September",
+        "charges": 142,
+        "spent": 3284.10,
+        "items": [
+          { "date": "Sep 01", "name": "Rent", "amount": 1850.00 },
+          { "date": "Sep 02", "name": "Streamly", "amount": 15.99, "sub": true },
+          { "date": "Sep 03", "name": "Green Grocer", "amount": 64.20 },
+          { "date": "Sep 05", "name": "Cloudbox", "amount": 12.99, "sub": true },
+          { "date": "Sep 07", "name": "Metro card", "amount": 40.00 },
+          { "date": "Sep 09", "name": "FitPass", "amount": 29.00, "sub": true },
+          { "date": "Sep 12", "name": "Corner Café", "amount": 8.40 },
+          { "date": "Sep 14", "name": "Newsdesk", "amount": 9.99, "sub": true },
+          { "date": "Sep 18", "name": "Hardware Co", "amount": 132.75 },
+          { "date": "Sep 21", "name": "Songbird", "amount": 10.99, "sub": true },
+          { "date": "Sep 24", "name": "Dinner · Luca", "amount": 86.00 },
+          { "date": "Sep 28", "name": "Pixelpad", "amount": 7.99, "sub": true }
+        ]
+      }</script>
+    </div>
+  </section>
+
+  <section data-st="zoom-into" data-st-direction="in" data-st-from="subs" data-st-duration="1.3" data-hold="1">
+    <div class="mo-scene" data-scene="subs">
+      <script type="application/json">{
+        "subs": [
+          { "name": "Streamly", "amount": 15.99, "opened": "2 days ago", "used": true },
+          { "name": "Cloudbox", "amount": 12.99, "opened": "94 days ago" },
+          { "name": "FitPass", "amount": 29.00, "opened": "61 days ago" },
+          { "name": "Newsdesk", "amount": 9.99, "opened": "120 days ago" },
+          { "name": "Songbird", "amount": 10.99, "opened": "today", "used": true },
+          { "name": "Pixelpad", "amount": 7.99, "opened": "203 days ago" }
+        ]
+      }</script>
+    </div>
+  </section>
+
+  <section data-st="zoom-into" data-st-direction="out" data-st-to="start" data-st-duration="1.3" data-hold="4">
+    <div class="mo-scene" data-scene="year">
+      <script type="application/json">{
+        "monthly": 59.97,
+        "months": ["Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
+        "tagline": "Sieve · stop paying for what you forgot."
+      }</script>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script src="../../../orca-transition-skill/node_modules/reveal.js/dist/reveal.js"></script>
+<script src="../../../orca-transition-skill/node_modules/gsap/dist/gsap.min.js"></script>
+<script src="../../runtime/motion.js"></script>
+<script>
+  const usd = (n) => `$${Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  // ── 场景：九月的账单 ──
+  OrcaMotion.scene("month", ({ el, tl, m, data }) => {
+    m.backdrop();
+    const LX = 160, LY = 280, LW = 1000, ROW = 50, GAP = 6;
+    const title = m.add("mo-t-l", { x: LX, y: 150 }, data.month);
+    const stats = m.add("mo-t-xs", { x: LX + 4, y: 232 }, "");
+    const list = m.rows({
+      x: LX, y: LY, w: LW, rowH: ROW, gap: GAP, items: data.items.map((it) => ({ ...it, amount: usd(it.amount) })),
+      columns: [{ key: "date", w: 110, cls: "mo-dim" }, { key: "name" }, { key: "amount", w: 160, align: "right" }],
+    });
+
+    // 建立：列表从上往下落下，统计滚动
+    m.rise(title, 0);
+    let t = m.appear(list.rows, { at: 0.15, origin: "top", span: 0.8, kind: "rise", duration: 0.35 });
+    m.count(stats, { at: 0.15, to: data.spent, decimals: 2, duration: 1.1, format: (s) => `${data.charges} charges · $${s}` });
+
+    // 发生 1：订阅一行行标成橙色
+    const subs = list.rows.filter((_, i) => data.items[i].sub);
+    const others = list.rows.filter((_, i) => !data.items[i].sub);
+    subs.forEach((r, i) => m.mark(r, t + 0.1 + i * 0.12));
+    t += 0.1 + subs.length * 0.12 + 0.3;
+
+    // 发生 2：其他行退成背景，订阅收拢成一根柱子（高度 = 金额）
+    others.forEach((r) => m.dim(r, t, { to: 0.25 }));
+    m.blur(others, 3, { at: t, duration: 0.8 });
+    const SX = 1240, SY = LY, SW = 520, SH = 12 * (ROW + GAP) - GAP, SGAP = 6;
+    const total = subs.reduce((a, _, i) => a + data.items.filter((it) => it.sub)[i].amount, 0);
+    const k = (SH - SGAP * (subs.length - 1)) / total;
+    let y = SY;
+    subs.forEach((r, i) => {
+      const h = data.items.filter((it) => it.sub)[i].amount * k;
+      m.move(r, { x: SX, y, w: SW, h }, { at: t + i * 0.05, duration: 0.8 });
+      y += h + SGAP;
+    });
+    const zone = m.add("mo-zone", { x: SX, y: SY, w: SW, h: SH });
+    zone.dataset.zoom = "subs";
+    const sum = m.add("mo-t-m", { x: SX, y: 200 }, "");
+    m.fade(sum, t + 0.5, 0.3);
+    m.count(sum, { at: t + 0.5, to: total, decimals: 2, duration: 0.8, format: (s) => `$${s} / month` });
+    m.hold(t + 1.3 + 0.3);
+  });
+
+  // ── 场景：6 个订阅 ──
+  // 从柱子里推进来：第 0 秒 6 行橙色订阅已经在，场景直接从「最后打开」揭开开始
+  OrcaMotion.scene("subs", ({ el, tl, m, data }) => {
+    m.backdrop();
+    const total = data.subs.reduce((a, s) => a + s.amount, 0);
+    const keep = data.subs.filter((s) => !s.used).reduce((a, s) => a + s.amount, 0);
+    const title = m.add("mo-t-l", { x: 160, y: 130 }, `${usd(total)} every month`);
+    m.add("mo-t-xs", { x: 164, y: 214 }, `${data.subs.length} subscriptions`);
+    const list = m.rows({
+      x: 160, y: 280, w: 1600, rowH: 100, gap: 16, cls: "mo-hot",
+      items: data.subs.map((s) => ({ ...s, amount: usd(s.amount), opened: `last opened ${s.opened}` })),
+      columns: [{ key: "name", cls: "mo-t-m" }, { key: "opened", w: 520, cls: "mo-t-s" }, { key: "amount", w: 260, align: "right", cls: "mo-t-m" }],
+    });
+
+    // 发生 1：「最后打开」一列从上往下揭开
+    let t = 0.2;
+    list.rows.forEach((_, i) => m.reveal(list.cell(i, "opened"), t + i * 0.1, 0.4));
+    t += data.subs.length * 0.1 + 0.5;
+
+    // 发生 2：还在用的退回灰色，标题换成能省下的钱
+    const used = list.rows.filter((_, i) => data.subs[i].used);
+    m.mark(used, t, { on: false, pulse: 1 });
+    used.forEach((r) => m.dim(r, t, { to: 0.45 }));
+    m.blur(used, 3, { at: t });
+    m.swapText(title, `${usd(0)} back every month`, t + 0.2, 0.4);
+    m.count(title, { at: t + 0.6, to: keep, decimals: 2, duration: 0.8, format: (s) => `$${s} back every month` });
+    m.hold(t + 1.4 + 0.3);
+  });
+
+  // ── 场景：一年 ──
+  // 从上一页缩回来：第 0 秒坐标轴、月份和起点已经在，场景从画线开始
+  OrcaMotion.scene("year", ({ el, tl, m, data }) => {
+    m.backdrop({ at: [30, 30] });
+    const CX = 240, CY = 360, CW = 1440, CH = 480;
+    const values = data.months.map((_, i) => i * data.monthly);
+    const kept = values[values.length - 1];
+    m.add("mo-t-xs", { x: 164, y: 130 }, "kept in a year");
+    const big = m.add("mo-t-xl", { x: 160, y: 160 }, usd(0));
+    m.add("mo-axis", { x: CX, y: CY + CH, w: CW });
+    data.months.forEach((mo, i) => {
+      const n = m.add("mo-t-xs", { x: CX + (i * CW) / (data.months.length - 1) - 40, y: CY + CH + 24, w: 80 }, mo);
+      n.style.textAlign = "center";
+    });
+    const line = m.line({ x: CX, y: CY, w: CW, h: CH, values });
+    const p0 = line.at(0);
+    const dot = m.add("mo-dot", { x: p0.x - 12, y: p0.y - 12, w: 24, h: 24 });
+    dot.dataset.zoom = "start";
+
+    const t = 0.2, D = 1.8;
+    m.draw(line, { at: t, duration: D, follow: dot });
+    m.count(big, { at: t, to: kept, decimals: 2, duration: D, ease: "power1.inOut", format: (s) => `$${s}` });
+    const tag = m.add("mo-t-s", { x: 164, y: 300 }, data.tagline);
+    m.reveal(tag, t + D + 0.2, 0.6);
+  });
+</script>
+<script src="../../../orca-transition-skill/runtime/engine.js"></script>
+</body>
+</html>
