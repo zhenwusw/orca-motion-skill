@@ -19,18 +19,18 @@ jobs:
       # 两个仓库要并排放：build-site.mjs 从 ../orca-transition-skill 取
       # reveal / gsap / engine.js。actions/checkout 不允许签出到工作区之外，
       # 所以本仓库也放进子目录。
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           path: orca-motion-skill
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: zhenwusw/orca-transition-skill
           path: orca-transition-skill
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
 
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
