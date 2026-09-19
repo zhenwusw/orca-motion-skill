@@ -19,3 +19,9 @@ npm-debug.log*
 
 # Dev-only test scenes
 examples/_tests/
+
+# npm run dev / build:site 的产物
+/index.html
+/site/
+examples/*/preview.mp4
+examples/*/preview.gif

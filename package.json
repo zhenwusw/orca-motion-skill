@@ -5,6 +5,9 @@
   "description": "Agent skill for in-scene motion graphics (MG) built from abstract, design-token-driven shapes; pairs with orca-transition-skill.",
   "type": "module",
   "scripts": {
+    "dev": "node scripts/gallery.mjs && npx serve .",
+    "gallery": "node scripts/gallery.mjs",
+    "build:site": "node scripts/build-site.mjs",
     "capture": "node scripts/capture.mjs",
     "sync": "scripts/sync-shared.sh"
   },
