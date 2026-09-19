@@ -1,0 +1,16 @@
+{
+  "name": "motion",
+  "compatibility_date": "2025-04-01",
+  "assets": {
+    // build-site.mjs 的产物，不进版本库
+    "directory": "site",
+    // 场景里用的是相对路径（../../vendor/、../../runtime/、scene.js）。
+    "html_handling": "force-trailing-slash"
+  },
+  "routes": [
+    {
+      "pattern": "motion.orca-studio.ai",
+      "custom_domain": true
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+name: 部署 motion.orca-studio.ai
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "examples/**"
+      - "runtime/**"
+      - "scripts/gallery.mjs"
+      - "scripts/build-site.mjs"
+      - "wrangler.jsonc"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 两个仓库要并排放：build-site.mjs 从 ../orca-transition-skill 取
+      # reveal / gsap / engine.js。actions/checkout 不允许签出到工作区之外，
+      # 所以本仓库也放进子目录。
+      - uses: actions/checkout@v4
+        with:
+          path: orca-motion-skill
+
+      - uses: actions/checkout@v4
+        with:
+          repository: zhenwusw/orca-transition-skill
+          path: orca-transition-skill
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      # reveal.js 和 gsap 在 transition 仓库里
+      - run: npm ci
+        working-directory: orca-transition-skill
+
+      - run: npm ci
+        working-directory: orca-motion-skill
+
+      - run: node scripts/build-site.mjs
+        working-directory: orca-motion-skill
+
+      - name: 部署
+        run: npx wrangler deploy
+        working-directory: orca-motion-skill
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
